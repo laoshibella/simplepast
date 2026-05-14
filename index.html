@@ -3,259 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Past Tense Masterclass</title>
+    <title>Past Tense Adventure</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Bungee&display=swap" rel="stylesheet">
     <style>
         :root {
             --pink: #ffdae9; --blue: #d1eaed; --yellow: #fcf4dd;
-            --text: #333; --accent: #ff85a1; --green: #b4f8c8; --red: #ffabab;
+            --text: #4a4a4a; --accent: #ff85a1; --green: #b4f8c8; --red: #ffabab;
         }
 
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden;
-        }
+        body { font-family: 'Quicksand', sans-serif; background-color: #f0f4f8; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
 
-        .app-container {
-            width: 98vw; height: 95vh; max-width: 1300px; background: white; border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column;
-        }
-
-        .slide { display: none; flex-direction: column; align-items: center; padding: 30px; height: 100%; box-sizing: border-box; overflow-y: auto; text-align: center; }
+        .container { width: 96vw; height: 92vh; max-width: 1200px; background: white; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); position: relative; display: flex; flex-direction: column; }
+        .slide { display: none; flex-direction: column; align-items: center; padding: 40px; height: 100%; box-sizing: border-box; overflow-y: auto; text-align: center; }
         .slide.active { display: flex; }
 
-        h1 { font-family: 'Bungee'; color: var(--accent); font-size: 2.5rem; margin-top: 0; }
-        h2 { font-family: 'Bungee'; color: var(--text); }
+        h1 { font-family: 'Bungee'; color: var(--accent); font-size: 2.8rem; margin: 0; }
+        h2 { font-family: 'Bungee'; color: var(--text); font-size: 1.8rem; }
 
-        /* Photo Matching Game */
-        .match-container { display: flex; justify-content: space-around; width: 100%; margin-top: 20px; }
-        .match-column { display: flex; flex-direction: column; gap: 15px; }
-        .photo-card { width: 220px; border: 4px solid var(--blue); border-radius: 15px; cursor: pointer; background: white; padding: 5px; }
-        .photo-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; }
-        .word-card { padding: 15px; background: var(--yellow); border-radius: 15px; font-weight: bold; cursor: pointer; border: 3px solid #eee; width: 180px; }
-        .selected { border-color: var(--accent); background: var(--pink); }
+        /* Formation Rules Styles */
+        .rule-box { background: var(--yellow); padding: 20px; border-radius: 20px; border: 4px dashed var(--accent); margin: 15px; width: 80%; }
+        .formula { font-family: 'Bungee'; font-size: 2rem; color: #ff85a1; }
 
-        /* Tug of War UI */
-        .battle-stage { width: 100%; height: 250px; position: relative; background: #eef; border-radius: 20px; margin: 20px 0; display: flex; align-items: center; }
-        .rope-line { position: absolute; width: 100%; height: 10px; background: #8d6e63; top: 60%; }
-        .tugger { position: absolute; width: 100px; transition: 0.4s; top: 35%; font-size: 4rem; }
-        #tug-p1 { left: 10%; }
-        #tug-p2 { right: 10%; transform: scaleX(-1); }
-        #flag { position: absolute; left: 50%; top: 50%; transform: translateX(-50%); font-size: 2rem; transition: 0.4s; }
+        /* Tug of War Split Screen */
+        .tug-container { width: 100%; display: flex; flex-direction: column; height: 100%; }
+        .battle-track { width: 100%; height: 120px; background: #e8f1f2; border-radius: 20px; position: relative; display: flex; align-items: center; border: 4px solid #ddd; margin-bottom: 20px; }
+        .rope { position: absolute; width: 100%; height: 8px; background: #a67c52; top: 50%; }
+        .puller { position: absolute; font-size: 3.5rem; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); top: 15%; }
+        #tug-flag { position: absolute; left: 50%; transform: translateX(-50%); font-size: 2rem; top: 35%; transition: 0.3s; z-index: 10; }
 
-        /* Word Hunt */
-        .tile-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
-        .tile { width: 55px; height: 55px; background: var(--yellow); border: 3px solid #f3e5ab; border-radius: 12px; font-size: 1.5rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .tile.used { opacity: 0.2; pointer-events: none; }
+        .battle-zones { display: flex; gap: 15px; flex: 1; }
+        .zone { flex: 1; border-radius: 30px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .p1-zone { background: var(--pink); border: 5px solid #ffb6c1; }
+        .p2-zone { background: var(--blue); border: 5px solid #add8e6; }
 
-        /* Navigation */
-        .btn { padding: 15px 30px; border: none; border-radius: 50px; font-family: 'Bungee'; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
-        .nav-footer { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: space-between; padding: 0 40px; box-sizing: border-box; }
+        /* UI */
+        .btn { padding: 12px 25px; border: none; border-radius: 50px; font-family: 'Bungee'; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0px rgba(0,0,0,0.1); margin: 5px; }
+        .btn:active { transform: translateY(2px); box-shadow: none; }
+        .nav-bar { position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: space-around; align-items: center; }
+        
+        .opt-btn { background: white; width: 100%; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-<audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
-<audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
+<audio id="sfx-ok" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+<audio id="sfx-no" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
 
-<div class="app-container">
+<div class="container">
     
-    <!-- SLIDE 1: INTRO -->
+    <!-- SLIDE 1: WELCOME -->
     <div class="slide active">
-        <h1>THE TIME MACHINE 🕰️</h1>
-        <p>A 20-Step Journey into the Past</p>
-        <img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=600&q=80" style="width:400px; border-radius:20px; border: 10px solid var(--blue);">
-        <p>Ready to go back in time?</p>
+        <h1>TIME TRAVELERS 🕒</h1>
+        <p style="font-size: 1.5rem;">The "Yesterday" Mission</p>
+        <img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=500&q=80" style="width: 350px; border-radius: 30px; border: 8px solid var(--blue);">
     </div>
 
-    <!-- SLIDE 2: WORD HUNT -->
+    <!-- SLIDE 2: VERB FORMATION - REGULAR -->
     <div class="slide">
-        <h2>YESTERDAY WORD HUNT 🔎</h2>
-        <p>Make words like <b>STAYED, TEARS, DATE</b></p>
-        <div id="hunt-out" style="font-size: 3rem; color: var(--accent); height: 70px; border-bottom: 4px dashed var(--blue); min-width: 300px;"></div>
-        <div class="tile-container" id="hunt-tiles"></div>
-        <div>
-            <button class="btn" style="background:var(--red)" onclick="clearHunt()">CLEAR</button>
-            <button class="btn" style="background:var(--green)" onclick="submitHunt()">ADD</button>
+        <h2>How to make the Past? 🛠️</h2>
+        <div class="rule-box">
+            <h3>Rule 1: Regular Verbs</h3>
+            <p>Just add <b>-ed</b> to the end!</p>
+            <div class="formula">PLAY + ED = PLAYED</div>
+            <p>Walk → Walked | Cook → Cooked | Jump → Jumped</p>
         </div>
-        <div id="hunt-log" style="margin-top:20px; display:flex; flex-wrap:wrap; gap:10px; background:#f0f0f0; padding:15px; border-radius:15px; width:100%; min-height:50px;"></div>
+        <img src="https://cdn-icons-png.flaticon.com/512/3534/3534033.png" width="100">
     </div>
 
-    <!-- SLIDES 3-7: PHOTO MATCHING (PAST VS PRESENT) -->
+    <!-- SLIDE 3: VERB FORMATION - IRREGULAR -->
     <div class="slide">
-        <h2>Match: Transport 🚂</h2>
-        <p>Click the <b>Picture</b> then the <b>Verb</b>!</p>
-        <div class="match-container">
-            <div class="match-column" id="img-col-1">
-                <div class="photo-card" onclick="selItem(this, 'img', 'traveled')"><img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=300&q=80"><p>PAST</p></div>
-                <div class="photo-card" onclick="selItem(this, 'img', 'travel')"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?auto=format&fit=crop&w=300&q=80"><p>PRESENT</p></div>
-            </div>
-            <div class="match-column" id="word-col-1">
-                <div class="word-card" onclick="selItem(this, 'word', 'traveled')">TRAVELED</div>
-                <div class="word-card" onclick="selItem(this, 'word', 'travel')">TRAVEL</div>
-            </div>
+        <h2>The Rule Breakers! 🙊</h2>
+        <div class="rule-box" style="border-color: var(--blue);">
+            <h3>Rule 2: Irregular Verbs</h3>
+            <p>These verbs change their whole body!</p>
+            <div class="formula">GO → WENT</div>
+            <p>Eat → Ate | Run → Ran | See → Saw</p>
         </div>
+        <p><i>You have to memorize these!</i></p>
     </div>
 
-    <!-- SLIDE 8: PHOTO MATCHING (CLOTHES) -->
+    <!-- SLIDE 4: HISTORY - CLOTHES (Kept) -->
     <div class="slide">
-        <h2>Match: Clothes 👗</h2>
-        <div class="match-container">
-            <div class="match-column">
-                <div class="photo-card" onclick="selItem(this, 'img', 'wore')"><img src="https://images.unsplash.com/photo-1572804013427-4d7ca7268217?auto=format&fit=crop&w=300&q=80"><p>PAST</p></div>
-                <div class="photo-card" onclick="selItem(this, 'img', 'wear')"><img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=300&q=80"><p>PRESENT</p></div>
-            </div>
-            <div class="match-column">
-                <div class="word-card" onclick="selItem(this, 'word', 'wear')">WEAR</div>
-                <div class="word-card" onclick="selItem(this, 'word', 'wore')">WORE</div>
-            </div>
-        </div>
+        <h2>Ancient Clothes 👗</h2>
+        <p>In the past, people <b>wore</b> heavy, long dresses every day.</p>
+        <img src="https://images.unsplash.com/photo-1572804013427-4d7ca7268217?auto=format&fit=crop&w=600&q=80" style="width: 400px; border-radius: 20px;">
     </div>
 
-    <!-- SLIDE 9: VERB TUG OF WAR -->
+    <!-- SLIDE 5: TUG OF WAR -->
     <div class="slide">
-        <h2>DUAL BATTLE: TUG OF WAR 🚩</h2>
-        <div class="battle-stage">
-            <div class="rope-line"></div>
-            <div id="tug-p1" class="tugger">🏃‍♂️</div>
-            <div id="flag">🚩</div>
-            <div id="tug-p2" class="tugger">🏃‍♂️</div>
-        </div>
-        <div style="display: flex; width:100%; gap:20px;">
-            <div style="flex:1; background:var(--pink); padding:15px; border-radius:20px;">
-                <h3 id="p1-q">Present: GO</h3>
-                <div id="p1-opts" style="display:grid; gap:10px;"></div>
+        <h2>VERB TUG-OF-WAR ⚔️</h2>
+        <div class="tug-container">
+            <div class="battle-track">
+                <div class="rope"></div>
+                <div id="p1-puller" class="puller" style="left:15%">👦</div>
+                <div id="tug-flag">🚩</div>
+                <div id="p2-puller" class="puller" style="right:15%; transform: scaleX(-1);">👧</div>
             </div>
-            <div style="flex:1; background:var(--blue); padding:15px; border-radius:20px;">
-                <h3 id="p2-q">Present: EAT</h3>
-                <div id="p2-opts" style="display:grid; gap:10px;"></div>
+            
+            <div class="battle-zones">
+                <!-- Player 1 Screen -->
+                <div class="zone p1-zone">
+                    <p>PLAYER 1</p>
+                    <h3 id="p1-word">GO</h3>
+                    <div id="p1-options" style="width: 100%;"></div>
+                </div>
+                <!-- Player 2 Screen -->
+                <div class="zone p2-zone">
+                    <p>PLAYER 2</p>
+                    <h3 id="p2-word">EAT</h3>
+                    <div id="p2-options" style="width: 100%;"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- PLACEHOLDERS FOR 20 SLIDES (For brevity, repeated logic is handled by JS) -->
-    <div id="extra-slides"></div>
+    <!-- Additional slides would follow same structure... -->
 
-    <div class="nav-footer">
-        <button class="btn" style="background:var(--blue)" onclick="changeSlide(-1)">PREV</button>
-        <span id="slide-num" style="font-family:'Bungee';">1 / 20</span>
-        <button class="btn" style="background:var(--pink)" onclick="changeSlide(1)">NEXT</button>
+    <div class="nav-bar">
+        <button class="btn" style="background:var(--blue)" onclick="move(-1)">BACK</button>
+        <div id="progress" style="font-family:'Bungee';">1 / 20</div>
+        <button class="btn" style="background:var(--pink)" onclick="move(1)">NEXT</button>
     </div>
 </div>
 
 <script>
-    let curSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    
-    function changeSlide(dir) {
-        slides[curSlide].classList.remove('active');
-        curSlide = Math.max(0, Math.min(slides.length - 1, curSlide + dir));
-        slides[curSlide].classList.add('active');
-        document.getElementById('slide-num').innerText = `${curSlide + 1} / ${slides.length}`;
-        
-        if(curSlide === 1) initHunt();
-        if(curSlide === 8) initTug();
-    }
-
-    // --- WORD HUNT LOGIC ---
-    let huntStr = "";
-    const huntDict = ["STAYED","STARED","STEADY","TRADES","TREADS","TEASER","TEARED","YEARED","YEARS","YEAST","YEARN","TEARS","RATES","STARE","STRAY","TRADE","TREAD","READY","DEARS","DATES","RATED","DRYER","SAYER","STEAD","TREES","YEAR","YARE","EAST","EASY","EARS","ERAS","TEAS","SEAT","RATE","READ","DEAR","DARE","DATE","DRAY","TRAY","STAY","STAR","REST","REAR","TREE","TEAR","SEED","REED","RISE","YES","YET","DAY","DYE","DRY","SAY","SEA","SET","SAT","SAD","ATE","EAT","TEA","EAR","ERA","ARE","RED","RYE","TRY","ART","RAT","TAR"];
-
-    function initHunt() {
-        const grid = document.getElementById('hunt-tiles'); grid.innerHTML = '';
-        "YESTERDAY".split('').forEach(l => {
-            const t = document.createElement('div'); t.className = 'tile'; t.innerText = l;
-            t.onclick = () => { huntStr += l; document.getElementById('hunt-out').innerText = huntStr; t.classList.add('used'); };
-            grid.appendChild(t);
-        });
-    }
-    function clearHunt() { huntStr = ""; document.getElementById('hunt-out').innerText = ""; document.querySelectorAll('.tile').forEach(t=>t.classList.remove('used')); }
-    function submitHunt() {
-        if(huntDict.includes(huntStr)) {
-            document.getElementById('sfx-correct').play();
-            const s = document.createElement('span'); s.innerText = huntStr; s.style="background:var(--green); padding:5px 10px; border-radius:10px; font-weight:bold;";
-            document.getElementById('hunt-log').prepend(s);
-        } else {
-            document.getElementById('sfx-wrong').play();
-        }
-        clearHunt();
-    }
-
-    // --- MATCHING LOGIC ---
-    let selImg = null, selWord = null;
-    function selItem(el, type, val) {
-        if(type === 'img') { 
-            if(selImg) selImg.el.classList.remove('selected');
-            selImg = {el, val}; el.classList.add('selected');
-        } else {
-            if(selWord) selWord.el.classList.remove('selected');
-            selWord = {el, val}; el.classList.add('selected');
-        }
-
-        if(selImg && selWord) {
-            if(selImg.val === selWord.val) {
-                document.getElementById('sfx-correct').play();
-                selImg.el.style.visibility = 'hidden';
-                selWord.el.style.visibility = 'hidden';
-            } else {
-                document.getElementById('sfx-wrong').play();
-                selImg.el.classList.remove('selected');
-                selWord.el.classList.remove('selected');
-            }
-            selImg = null; selWord = null;
-        }
-    }
-
-    // --- TUG OF WAR ---
+    let currentIdx = 0;
+    const allSlides = document.querySelectorAll('.slide');
     let flagPos = 50;
+
     const verbs = [
-        {pr: "EAT", pa: "ATE", d: ["EATED","ATE","EATS"]},
-        {pr: "GO", pa: "WENT", d: ["GOED","WENT","GONE"]},
-        {pr: "SEE", pa: "SAW", d: ["SAW","SEEED","SEEN"]},
-        {pr: "RUN", pa: "RAN", d: ["RUNNED","RUNS","RAN"]},
-        {pr: "BUY", pa: "BOUGHT", d: ["BOUGHT","BUYED","BUY"]},
-        {pr: "WRITE", pa: "WROTE", d: ["WRITED","WROTE","WRITING"]},
-        {pr: "DRINK", pa: "DRANK", d: ["DRINKED","DRANK","DRUNK"]},
-        {pr: "SING", pa: "SANG", d: ["SINGED","SANG","SUNG"]},
-        {pr: "SLEEP", pa: "SLEPT", d: ["SLEPT","SLEEPED","SLEEPS"]},
-        {pr: "MAKE", pa: "MADE", d: ["MAKED","MAKING","MADE"]}
+        {pr: "WALK", pa: "WALKED", choices: ["WALKED", "WALKING", "WALKS"]},
+        {pr: "GO", pa: "WENT", choices: ["GOED", "WENT", "GONE"]},
+        {pr: "EAT", pa: "ATE", choices: ["EATING", "ATE", "EATS"]},
+        {pr: "DRINK", pa: "DRANK", choices: ["DRINKED", "DRANK", "DRUNK"]},
+        {pr: "PLAY", pa: "PLAYED", choices: ["PLAY", "PLAYED", "PLAYS"]},
+        {pr: "RUN", pa: "RAN", choices: ["RUNNED", "RUNS", "RAN"]},
+        {pr: "SEE", pa: "SAW", choices: ["SAW", "SEE", "SEEN"]}
     ];
 
-    function initTug() {
-        flagPos = 50; updateTugSide(1); updateTugSide(2);
+    function move(dir) {
+        allSlides[currentIdx].classList.remove('active');
+        currentIdx = Math.max(0, Math.min(allSlides.length - 1, currentIdx + dir));
+        allSlides[currentIdx].classList.add('active');
+        document.getElementById('progress').innerText = `${currentIdx + 1} / ${allSlides.length}`;
+        
+        if(currentIdx === 4) startTug();
     }
 
-    function updateTugSide(p) {
-        const v = verbs[Math.floor(Math.random()*verbs.length)];
-        document.getElementById(`p${p}-q`).innerText = "Present: " + v.pr;
-        const opts = document.getElementById(`p${p}-opts`); opts.innerHTML = '';
-        v.d.forEach(o => {
-            const b = document.createElement('button'); b.className = 'btn'; b.innerText = o;
-            b.onclick = () => {
-                if(o === v.pa) {
-                    document.getElementById('sfx-correct').play();
-                    flagPos += (p === 1 ? -5 : 5);
-                    document.getElementById('flag').style.left = flagPos + "%";
-                    document.getElementById('tug-p1').style.left = (flagPos - 40) + "%";
-                    document.getElementById('tug-p2').style.right = (100 - flagPos - 40) + "%";
-                    updateTugSide(p);
+    function startTug() {
+        flagPos = 50;
+        updatePlayer(1);
+        updatePlayer(2);
+    }
+
+    function updatePlayer(p) {
+        const verb = verbs[Math.floor(Math.random() * verbs.length)];
+        document.getElementById(`p${p}-word`).innerText = verb.pr;
+        const container = document.getElementById(`p${p}-options`);
+        container.innerHTML = '';
+
+        verb.choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'btn opt-btn';
+            btn.innerText = choice;
+            btn.onclick = () => {
+                if(choice === verb.pa) {
+                    document.getElementById('sfx-ok').play();
+                    flagPos += (p === 1 ? -7 : 7);
+                    document.getElementById('tug-flag').style.left = flagPos + "%";
+                    updatePlayer(p);
                 } else {
-                    document.getElementById('sfx-wrong').play();
+                    document.getElementById('sfx-no').play();
+                    btn.style.background = "var(--red)";
                 }
             };
-            opts.appendChild(b);
+            container.appendChild(btn);
         });
     }
-
-    // Add extra slides for target count
-    for(let i=10; i<=20; i++) {
-        const s = document.createElement('div'); s.className = 'slide';
-        s.innerHTML = `<h2>Lesson Part ${i}</h2><p>Reviewing the Past Tense concepts...</p><img src="https://images.unsplash.com/photo-1454165833767-027ffea9e7a7?auto=format&fit=crop&w=400&q=80" style="width:300px; border-radius:20px;">`;
-        document.querySelector('.app-container').insertBefore(s, document.querySelector('.nav-footer'));
-    }
 </script>
-
 </body>
 </html>
