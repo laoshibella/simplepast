@@ -1,30 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Tense Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #ffdae9;
+            --blue: #d1eaed;
+            --yellow: #fcf4dd;
+            --text: #5a5a5a;
+            --accent: #ff85a1;
+            --green: #b4f8c8;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--blue);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            margin-top: 40px;
+            text-align: center;
+            min-height: 450px;
+        }
+
+        h1 { color: var(--accent); font-size: 2.2rem; margin-bottom: 10px; }
+        p { font-size: 1.2rem; }
+
+        /* Game Styles */
+        .letter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .letter-tile {
+            width: 55px;
+            height: 55px;
+            background-color: var(--yellow);
+            border: 3px solid #f3e5ab;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            user-select: none;
+        }
+
+        .letter-tile:hover { transform: scale(1.1); background-color: #fce4a8; }
+        .letter-tile.used { background-color: #ddd; opacity: 0.5; pointer-events: none; }
+
+        #current-word {
+            font-size: 2rem;
+            min-height: 50px;
+            margin: 15px;
+            letter-spacing: 5px;
+            color: var(--accent);
+            border-bottom: 3px dashed var(--pink);
+            display: inline-block;
+            padding: 0 20px;
+            text-transform: uppercase;
+        }
+
+        .controls button {
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            font-family: 'Quicksand', sans-serif;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn-submit { background-color: var(--green); color: #2d5a27; }
+        .btn-clear { background-color: var(--pink); color: #853a4a; }
+
+        #found-words-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #fdfdfd;
+            border-radius: 15px;
+            border: 1px solid #eee;
+        }
+
+        .word-tag { background: var(--blue); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
+
+        /* Comparison Slide */
+        .compare-box {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .side {
+            flex: 1;
+            padding: 15px;
+            border-radius: 20px;
+            text-align: left;
+        }
+
+        .past-side { background-color: var(--pink); }
+        .present-side { background-color: var(--blue); }
+
+        /* Navigation */
+        .nav-dots {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .dot {
+            width: 18px;
+            height: 18px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot.active { background: var(--accent); transform: scale(1.3); }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: WELCOME -->
+<div class="container" id="slide-1">
+    <h1>Yesterday's Adventures! 🕒</h1>
+    <p>How do we talk about things we did before?</p>
+    <img src="https://img.icons8.com/bubbles/200/calendar.png" alt="calendar" style="width:150px;">
+    <p style="color: var(--accent); font-weight: bold;">Click the next dot to play our Warm-Up Game!</p>
+</div>
+
+<!-- SLIDE 2: LETTER HUNT GAME -->
+<div class="container" id="slide-2" style="display:none;">
+    <h1>🔠 The Letter Hunt</h1>
+    <p>Build as many words as you can using letters from:</p>
+    <h2 style="letter-spacing: 5px; color: var(--accent);">Y E S T E R D A Y</h2>
+    
+    <div id="current-word"></div>
+    
+    <div class="letter-container" id="letters"></div>
+
+    <div class="controls">
+        <button class="btn-clear" onclick="clearWord()">Clear</button>
+        <button class="btn-submit" onclick="submitWord()">Add Word</button>
+    </div>
+
+    <p>Words Found: <span id="count" style="font-weight:bold;">0</span></p>
+    <div id="found-words-list"></div>
+</div>
+
+<!-- SLIDE 3: GRAMMAR RULES -->
+<div class="container" id="slide-3" style="display:none;">
+    <h1>Everyday Words 🍎</h1>
+    <p>To talk about the past, we usually add <b>-ed</b>!</p>
+    <div style="display: flex; justify-content: center; gap: 40px; margin-top: 20px;">
+        <div style="text-align: right; font-size: 1.5rem; color: #999;">
+            Play<br>Walk<br>Watch<br>Wash
+        </div>
+        <div style="text-align: left; font-size: 1.5rem; color: var(--accent); font-weight: bold;">
+            ➔ Played<br>➔ Walked<br>➔ Watched<br>➔ Washed
+        </div>
+    </div>
+    <div style="margin-top: 30px; padding: 15px; background: var(--yellow); border-radius: 15px;">
+        "<b>Yesterday</b>, I <b>played</b> with my friends!"
+    </div>
+</div>
+
+<!-- SLIDE 4: THEN vs NOW -->
 <div class="container" id="slide-4" style="display:none;">
     <h1>Then vs. Now 🕰️</h1>
-    <p>How did things change? Let's compare!</p>
+    <p>How did everyday things change?</p>
     
-    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
-        <div style="background: var(--pink); padding: 15px; border-radius: 15px; width: 45%;">
+    <div class="compare-box">
+        <div class="side past-side">
             <h3>The Past 📜</h3>
-            <ul style="text-align: left; line-height: 1.8;">
+            <ul>
                 <li>👗 Long dresses & hats</li>
-                <li>🪵 Wooden horses & blocks</li>
-                <li>🐴 Horse and carriage</li>
+                <li>🪵 Wooden toys</li>
+                <li>🐴 Horse & carriage</li>
             </ul>
         </div>
-        <div style="background: var(--blue); padding: 15px; border-radius: 15px; width: 45%;">
+        <div class="side present-side">
             <h3>The Present 📱</h3>
-            <ul style="text-align: left; line-height: 1.8;">
-                <li>👕 T-shirts and jeans</li>
-                <li>🎮 Video games & robots</li>
+            <ul>
+                <li>👕 T-shirts & jeans</li>
+                <li>🎮 Video games</li>
                 <li>⚡ Electric cars</li>
             </ul>
         </div>
     </div>
     
-    <div style="margin-top: 20px; font-style: italic; color: var(--accent);">
-        "Yesterday, I <b>played</b> with my robot. Long ago, kids <b>played</b> with wood!"
-    </div>
+    <p style="margin-top: 20px; font-style: italic; font-size: 1rem;">
+        Challenge: "In the past, people <b>traveled</b> by horse!"
+    </p>
 </div>
 
-<!-- Remember to add a 4th dot in the navigation section: -->
-<!-- <div class="dot" onclick="showSlide(4)"></div> -->
+<!-- NAVIGATION DOTS -->
+<div class="nav-dots">
+    <div class="dot active" onclick="showSlide(1)"></div>
+    <div class="dot" onclick="showSlide(2)"></div>
+    <div class="dot" onclick="showSlide(3)"></div>
+    <div class="dot" onclick="showSlide(4)"></div>
+</div>
+
+<script>
+    const rootWord = "YESTERDAY";
+    let currentWord = "";
+    let foundWords = new Set();
+    const lettersDiv = document.getElementById('letters');
+    const wordDisplay = document.getElementById('current-word');
+    const listDisplay = document.getElementById('found-words-list');
+
+    function initGame() {
+        lettersDiv.innerHTML = '';
+        rootWord.split('').forEach((char) => {
+            const tile = document.createElement('div');
+            tile.className = 'letter-tile';
+            tile.innerText = char;
+            tile.onclick = () => {
+                currentWord += char;
+                wordDisplay.innerText = currentWord;
+                tile.classList.add('used');
+            };
+            lettersDiv.appendChild(tile);
+        });
+    }
+
+    function clearWord() {
+        currentWord = "";
+        wordDisplay.innerText = "";
+        document.querySelectorAll('.letter-tile').forEach(t => t.classList.remove('used'));
+    }
+
+    function submitWord() {
+        if (currentWord.length < 2) return;
+        if (!foundWords.has(currentWord)) {
+            foundWords.add(currentWord);
+            const tag = document.createElement('span');
+            tag.className = 'word-tag';
+            tag.innerText = currentWord;
+            listDisplay.prepend(tag);
+            document.getElementById('count').innerText = foundWords.size;
+        }
+        clearWord();
+    }
+
+    function showSlide(num) {
+        document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
+        document.getElementById('slide-' + num).style.display = 'block';
+        
+        document.querySelectorAll('.dot').forEach((d, i) => {
+            d.classList.toggle('active', i === num - 1);
+        });
+
+        if (num === 2) {
+            clearWord();
+            initGame();
+        }
+    }
+
+    initGame();
+</script>
+
+</body>
+</html>
