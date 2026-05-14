@@ -12,6 +12,11 @@
         }
 
         body { font-family: 'Quicksand', sans-serif; background-color: #f0f4f8; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+        
+        /* Full Screen Button */
+        #fullscreen-btn { position: absolute; top: 20px; right: 20px; z-index: 100; background: white; border: 2px solid var(--blue); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #fullscreen-btn:hover { transform: scale(1.1); background: var(--blue); }
+
         .container { width: 96vw; height: 92vh; max-width: 1200px; background: white; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); position: relative; display: flex; flex-direction: column; }
         .slide { display: none; flex-direction: column; align-items: center; padding: 40px; height: 100%; box-sizing: border-box; overflow-y: auto; text-align: center; }
         .slide.active { display: flex; }
@@ -19,16 +24,13 @@
         h1 { font-family: 'Bungee'; color: var(--accent); font-size: 2.8rem; margin: 0; }
         h2 { font-family: 'Bungee'; color: var(--text); font-size: 1.8rem; }
 
-        /* Warm-up: Word Hunt Grid */
         .tile-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
         .tile { width: 55px; height: 55px; background: var(--yellow); border: 3px solid #f3e5ab; border-radius: 12px; font-size: 1.6rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .tile.used { opacity: 0.2; pointer-events: none; transform: scale(0.9); }
 
-        /* Formation Rules */
         .rule-box { background: var(--yellow); padding: 25px; border-radius: 30px; border: 5px dashed var(--accent); width: 85%; margin-top: 10px; }
         .formula { font-family: 'Bungee'; font-size: 2.2rem; color: var(--accent); letter-spacing: 2px; }
 
-        /* Tug of War Split Screen */
         .tug-container { width: 100%; display: flex; flex-direction: column; height: 100%; }
         .battle-track { width: 100%; height: 130px; background: #e8f1f2; border-radius: 30px; position: relative; display: flex; align-items: center; border: 4px solid #ddd; margin: 15px 0; }
         .rope { position: absolute; width: 100%; height: 10px; background: #a67c52; top: 50%; }
@@ -41,7 +43,6 @@
         .p2-zone { background: var(--blue); border: 6px solid #add8e6; }
         .opt-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; margin-top: 10px; }
 
-        /* UI Buttons */
         .btn { padding: 15px 30px; border: none; border-radius: 50px; font-family: 'Bungee'; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0px rgba(0,0,0,0.1); }
         .btn:active { transform: translateY(3px); box-shadow: none; }
         .opt-btn { background: white; font-size: 1.2rem; box-shadow: 0 4px 0 rgba(0,0,0,0.05); }
@@ -50,18 +51,21 @@
 </head>
 <body>
 
+<button id="fullscreen-btn" onclick="toggleFullScreen()" title="Toggle Full Screen">⛶</button>
+
 <audio id="sfx-ok" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 <audio id="sfx-no" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
 
-<div class="container">
+<div class="container" id="main-container">
     
+    <!-- SLIDE 1: WELCOME -->
     <div class="slide active">
         <h1>TIME TRAVELERS 🕒</h1>
         <p style="font-size: 1.5rem;">The "Yesterday" Mission</p>
         <img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=500&q=80" style="width: 350px; border-radius: 30px; border: 8px solid var(--blue);">
     </div>
 
-    <!-- WARM UP: WORD HUNT -->
+    <!-- SLIDE 2: WARM UP -->
     <div class="slide">
         <h2>WARM UP: WORD HUNT 🕵️</h2>
         <p>Find the 72 words hidden in "YESTERDAY"!</p>
@@ -74,7 +78,7 @@
         <div id="found-log" style="display:flex; flex-wrap:wrap; gap:8px; padding:15px; background:#f8f8f8; border-radius:20px; width:90%; min-height:50px;"></div>
     </div>
 
-    <!-- FORMATION -->
+    <!-- SLIDE 3: RULES -->
     <div class="slide">
         <h2>Verb Formation 🛠️</h2>
         <div class="rule-box">
@@ -95,7 +99,7 @@
         </div>
     </div>
 
-    <!-- TUG OF WAR -->
+    <!-- SLIDE 5: TUG OF WAR -->
     <div class="slide">
         <h2>VERB TUG-OF-WAR ⚔️</h2>
         <div class="tug-container">
@@ -132,8 +136,7 @@
     const allSlides = document.querySelectorAll('.slide');
     let typed = "";
     let flagPos = 50;
-    
-    // FULL DICTIONARY FOR WARM UP
+
     const huntDict = ["STAYED", "STARED", "STEADY", "TRADES", "TREADS", "TEASER", "TEARED", "YEARED", "YEARS", "YEAST", "YEARN", "TEARS", "RATES", "STARE", "STRAY", "TRADE", "TREAD", "READY", "DEARS", "DATES", "RATED", "DRYER", "SAYER", "STEAD", "TREES", "YEAR", "YARE", "EAST", "EASY", "EARS", "ERAS", "TEAS", "SEAT", "RATE", "READ", "DEAR", "DARE", "DATE", "DRAY", "TRAY", "STAY", "STAR", "REST", "REAR", "TREE", "TEAR", "SEED", "REED", "RISE", "YES", "YET", "DAY", "DYE", "DRY", "SAY", "SEA", "SET", "SAT", "SAD", "ATE", "EAT", "TEA", "EAR", "ERA", "ARE", "RED", "RYE", "TRY", "ART", "RAT", "TAR"];
 
     const tugVerbs = [
@@ -145,6 +148,16 @@
         {pr: "SEE", pa: "SAW", choices: ["SAW", "SEED", "SEEN"]},
         {pr: "DO", pa: "DID", choices: ["DOED", "DONE", "DID"]}
     ];
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Error: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
 
     function move(dir) {
         allSlides[currentIdx].classList.remove('active');
