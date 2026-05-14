@@ -1,261 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Past Tense Adventure</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --pink: #ffdae9;
-            --blue: #d1eaed;
-            --yellow: #fcf4dd;
-            --text: #5a5a5a;
-            --accent: #ff85a1;
-        }
-
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--blue);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 800px;
-            background: white;
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        h1 { color: var(--accent); font-size: 2.5rem; }
-
-        /* Game Styles */
-        .letter-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-
-        .letter-tile {
-            width: 60px;
-            height: 60px;
-            background-color: var(--yellow);
-            border: 3px solid #f3e5ab;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            user-select: none;
-        }
-
-        .letter-tile:hover {
-            transform: scale(1.1);
-            background-color: #fce4a8;
-        }
-
-        .letter-tile.used {
-            background-color: #ddd;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        #current-word {
-            font-size: 2rem;
-            min-height: 50px;
-            margin: 20px;
-            letter-spacing: 5px;
-            color: var(--accent);
-            border-bottom: 3px dashed var(--pink);
-            display: inline-block;
-            padding: 0 20px;
-        }
-
-        .controls {
-            margin: 20px 0;
-        }
-
-        button {
-            padding: 10px 25px;
-            font-size: 1.2rem;
-            font-family: 'Quicksand', sans-serif;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            margin: 5px;
-            transition: 0.3s;
-        }
-
-        .btn-submit { background-color: #b4f8c8; color: #2d5a27; }
-        .btn-clear { background-color: var(--pink); color: #853a4a; }
-
-        #found-words-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 15px;
-        }
-
-        .word-tag {
-            background: var(--blue);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .lesson-content {
-            display: none;
-            text-align: left;
-            padding: 20px;
-        }
-
-        .visible { display: block; }
-        
-        .nav-dots {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .dot {
-            width: 15px;
-            height: 15px;
-            background: #ddd;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .dot.active { background: var(--accent); }
-    </style>
-</head>
-<body>
-
-<div class="container" id="slide-1">
-    <h1>Yesterday's Adventures! 🕒</h1>
-    <p>Let's learn how to talk about things we did before.</p>
-    <img src="https://img.icons8.com/bubbles/200/calendar.png" alt="calendar">
-    <p>Press the dot below to start our game!</p>
-</div>
-
-<div class="container" id="slide-2" style="display:none;">
-    <h1>🔠 Letter Hunt</h1>
-    <p>Build words using the letters from <strong>YESTERDAY</strong>!</p>
+<div class="container" id="slide-4" style="display:none;">
+    <h1>Then vs. Now 🕰️</h1>
+    <p>How did things change? Let's compare!</p>
     
-    <div id="current-word"></div>
+    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+        <div style="background: var(--pink); padding: 15px; border-radius: 15px; width: 45%;">
+            <h3>The Past 📜</h3>
+            <ul style="text-align: left; line-height: 1.8;">
+                <li>👗 Long dresses & hats</li>
+                <li>🪵 Wooden horses & blocks</li>
+                <li>🐴 Horse and carriage</li>
+            </ul>
+        </div>
+        <div style="background: var(--blue); padding: 15px; border-radius: 15px; width: 45%;">
+            <h3>The Present 📱</h3>
+            <ul style="text-align: left; line-height: 1.8;">
+                <li>👕 T-shirts and jeans</li>
+                <li>🎮 Video games & robots</li>
+                <li>⚡ Electric cars</li>
+            </ul>
+        </div>
+    </div>
     
-    <div class="letter-container" id="letters">
-        <!-- Letters will be generated here -->
+    <div style="margin-top: 20px; font-style: italic; color: var(--accent);">
+        "Yesterday, I <b>played</b> with my robot. Long ago, kids <b>played</b> with wood!"
     </div>
-
-    <div class="controls">
-        <button class="btn-clear" onclick="clearWord()">Clear</button>
-        <button class="btn-submit" onclick="submitWord()">Check Word</button>
-    </div>
-
-    <h3>Words Found: <span id="count">0</span></h3>
-    <div id="found-words-list"></div>
 </div>
 
-<div class="container" id="slide-3" style="display:none;">
-    <h1>Everyday Words 🍎</h1>
-    <p>In the past, we add <b>-ed</b> to many words!</p>
-    <ul style="list-style: none; font-size: 1.5rem;">
-        <li>Play ➔ Play<b>ed</b></li>
-        <li>Walk ➔ Walk<b>ed</b></li>
-        <li>Watch ➔ Watch<b>ed</b></li>
-        <li>Wash ➔ Wash<b>ed</b></li>
-    </ul>
-    <p>Example: "Yesterday, I <b>played</b> games!"</p>
-</div>
-
-<div class="nav-dots">
-    <div class="dot active" onclick="showSlide(1)"></div>
-    <div class="dot" onclick="showSlide(2)"></div>
-    <div class="dot" onclick="showSlide(3)"></div>
-</div>
-
-<script>
-    const rootWord = "YESTERDAY";
-    let currentWord = "";
-    let foundWords = new Set();
-    const lettersDiv = document.getElementById('letters');
-    const wordDisplay = document.getElementById('current-word');
-    const listDisplay = document.getElementById('found-words-list');
-
-    // Setup Letter Tiles
-    function initGame() {
-        lettersDiv.innerHTML = '';
-        rootWord.split('').forEach((char, index) => {
-            const tile = document.createElement('div');
-            tile.className = 'letter-tile';
-            tile.innerText = char;
-            tile.onclick = () => addLetter(char, tile);
-            lettersDiv.appendChild(tile);
-        });
-    }
-
-    function addLetter(char, tile) {
-        currentWord += char;
-        wordDisplay.innerText = currentWord;
-        tile.classList.add('used');
-    }
-
-    function clearWord() {
-        currentWord = "";
-        wordDisplay.innerText = "";
-        document.querySelectorAll('.letter-tile').forEach(t => t.classList.remove('used'));
-    }
-
-    async function submitWord() {
-        if (currentWord.length < 2) return;
-        
-        // Simple English Validation (using a free API or local check)
-        // For elementary, we can just allow them to collect words
-        if (!foundWords.has(currentWord)) {
-            foundWords.add(currentWord);
-            const tag = document.createElement('span');
-            tag.className = 'word-tag';
-            tag.innerText = currentWord;
-            listDisplay.appendChild(tag);
-            document.getElementById('count').innerText = foundWords.size;
-        }
-        clearWord();
-    }
-
-    function showSlide(num) {
-        document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
-        document.getElementById('slide-' + num).style.display = 'block';
-        
-        document.querySelectorAll('.dot').forEach((d, i) => {
-            d.classList.toggle('active', i === num - 1);
-        });
-
-        if (num === 2) initGame();
-    }
-
-    initGame();
-</script>
-
-</body>
-</html>
+<!-- Remember to add a 4th dot in the navigation section: -->
+<!-- <div class="dot" onclick="showSlide(4)"></div> -->
