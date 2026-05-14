@@ -22,14 +22,16 @@
         h1 { font-family: 'Bungee'; color: var(--accent); font-size: 2.8rem; margin: 0; }
         h2 { font-family: 'Bungee'; color: var(--text); font-size: 1.8rem; }
 
+        /* Rule Slide Styling */
+        .rule-card { background: var(--yellow); padding: 30px; border-radius: 30px; border: 5px dashed var(--accent); width: 80%; margin: 20px auto; }
+        .formula { font-family: 'Bungee'; font-size: 2.5rem; color: var(--accent); margin: 10px 0; }
+        .example-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; margin-top: 20px; }
+        .ex-box { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--blue); }
+
         /* Word Hunt */
         .tile-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
         .tile { width: 55px; height: 55px; background: var(--yellow); border: 3px solid #f3e5ab; border-radius: 12px; font-size: 1.6rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .tile.used { opacity: 0.2; pointer-events: none; transform: scale(0.9); }
-
-        /* Rules */
-        .rule-box { background: var(--yellow); padding: 25px; border-radius: 30px; border: 5px dashed var(--accent); width: 85%; margin-top: 10px; }
-        .formula { font-family: 'Bungee'; font-size: 2.2rem; color: var(--accent); letter-spacing: 2px; }
 
         /* Tug of War UI */
         .tug-container { width: 100%; display: flex; flex-direction: column; height: 100%; position: relative; }
@@ -44,7 +46,6 @@
         .p2-zone { background: var(--blue); border: 6px solid #add8e6; }
         .opt-grid { display: grid; grid-template-columns: 1fr; gap: 10px; width: 100%; margin-top: 10px; }
 
-        /* Winner Overlay */
         #winner-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 200; flex-direction: column; align-items: center; justify-content: center; border-radius: 40px; }
 
         .btn { padding: 15px 30px; border: none; border-radius: 50px; font-family: 'Bungee'; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0px rgba(0,0,0,0.1); font-size: 1rem; }
@@ -55,20 +56,21 @@
 </head>
 <body>
 
-<button id="fullscreen-btn" onclick="toggleFullScreen()" title="Toggle Full Screen">⛶</button>
+<button id="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 
 <audio id="sfx-ok" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 <audio id="sfx-no" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
 
 <div class="container" id="main-container">
     
+    <!-- SLIDE 1: INTRO -->
     <div class="slide active">
         <h1>TIME TRAVELERS 🕒</h1>
         <p style="font-size: 1.5rem;">The "Yesterday" Mission</p>
         <img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=500&q=80" style="width: 300px; border-radius: 30px; border: 8px solid var(--blue);">
     </div>
 
-    <!-- WARM UP -->
+    <!-- SLIDE 2: WORD HUNT -->
     <div class="slide">
         <h2>WARM UP: WORD HUNT 🕵️</h2>
         <div id="hunt-display" style="font-size: 3rem; color: var(--accent); height: 70px; border-bottom: 5px solid var(--blue); min-width: 300px; margin-bottom: 20px; font-family:'Bungee';"></div>
@@ -80,7 +82,28 @@
         <div id="found-log" style="display:flex; flex-wrap:wrap; gap:8px; padding:15px; background:#f8f8f8; border-radius:20px; width:90%; min-height:50px;"></div>
     </div>
 
-    <!-- TUG OF WAR SLIDE -->
+    <!-- SLIDE 3: FORMATION RULES -->
+    <div class="slide">
+        <h2>HOW TO TRAVEL TO THE PAST?</h2>
+        <div class="rule-card">
+            <p style="font-weight: bold; font-size: 1.2rem;">For Regular Verbs, just add:</p>
+            <div class="formula">VERB + ED</div>
+            <div class="example-grid">
+                <div class="ex-box">PLAY ➔ <b>PLAYED</b></div>
+                <div class="ex-box">COOK ➔ <b>COOKED</b></div>
+            </div>
+        </div>
+        <div class="rule-card" style="background: var(--pink); border-color: var(--blue);">
+            <p style="font-weight: bold; font-size: 1.2rem;">Watch out! Irregular Verbs change completely:</p>
+            <div class="example-grid">
+                <div class="ex-box">GO ➔ <b>WENT</b></div>
+                <div class="ex-box">EAT ➔ <b>ATE</b></div>
+            </div>
+            <p style="margin-top:15px; font-style: italic;">These are the ones we'll use in the game!</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: TUG OF WAR -->
     <div class="slide">
         <h2 id="round-title">TUG-OF-WAR: ROUND 1/4</h2>
         <div class="tug-container">
@@ -119,7 +142,7 @@
 
     <div class="nav-bar">
         <button class="btn" style="background:var(--blue)" onclick="move(-1)">BACK</button>
-        <div id="progress" style="font-family:'Bungee';">1 / 3</div>
+        <div id="progress" style="font-family:'Bungee';">1 / 4</div>
         <button class="btn" style="background:var(--pink)" onclick="move(1)">NEXT</button>
     </div>
 </div>
@@ -136,13 +159,9 @@
     let p1WordsDone = 0;
     let p2WordsDone = 0;
     const roundVerbs = [
-        // ROUND 1: Daily Life
         [{pr: "GO", pa: "WENT", choices: ["GOED", "WENT", "GONE"]}, {pr: "EAT", pa: "ATE", choices: ["EATED", "ATE", "EATING"]}, {pr: "DRINK", pa: "DRANK", choices: ["DRINKED", "DRANK", "DRUNKEN"]}, {pr: "SLEEP", pa: "SLEPT", choices: ["SLEEPED", "SLEPT", "SLEEPING"]}, {pr: "RUN", pa: "RAN", choices: ["RUNNED", "RUNNING", "RAN"]}, {pr: "SIT", pa: "SAT", choices: ["SITTED", "SITTING", "SAT"]}, {pr: "DO", pa: "DID", choices: ["DOED", "DONE", "DID"]}, {pr: "HAVE", pa: "HAD", choices: ["HAVED", "HAD", "HAVING"]}, {pr: "COME", pa: "CAME", choices: ["COMED", "CAME", "COMING"]}, {pr: "READ", pa: "READ", choices: ["READED", "READ", "READING"]}],
-        // ROUND 2: School Actions
         [{pr: "WRITE", pa: "WROTE", choices: ["WRITED", "WROTE", "WRITTEN"]}, {pr: "DRAW", pa: "DREW", choices: ["DRAWED", "DREW", "DRAWING"]}, {pr: "SING", pa: "SANG", choices: ["SINGED", "SUNG", "SANG"]}, {pr: "SPEAK", pa: "SPOKE", choices: ["SPEAKED", "SPOKE", "SPOKEN"]}, {pr: "THINK", pa: "THOUGHT", choices: ["THINKED", "THOUGHT", "THINKING"]}, {pr: "TEACH", pa: "TAUGHT", choices: ["TEACHED", "TAUGHT", "TEACHING"]}, {pr: "KNOW", pa: "KNEW", choices: ["KNOWED", "KNEW", "KNOWN"]}, {pr: "MAKE", pa: "MADE", choices: ["MAKED", "MADE", "MAKING"]}, {pr: "FIND", pa: "FOUND", choices: ["FINDED", "FOUND", "FINDING"]}, {pr: "TAKE", pa: "TOOK", choices: ["TAKED", "TOOK", "TAKEN"]}],
-        // ROUND 3: Movement/Play
         [{pr: "FLY", pa: "FLEW", choices: ["FLYED", "FLOWN", "FLEW"]}, {pr: "SWIM", pa: "SWAM", choices: ["SWIMMED", "SWAM", "SWUM"]}, {pr: "THROW", pa: "THREW", choices: ["THROWED", "THREW", "THROWN"]}, {pr: "CATCH", pa: "CAUGHT", choices: ["CATCHED", "CAUGHT", "CATCHING"]}, {pr: "RIDE", pa: "RODE", choices: ["RIDED", "RODE", "RIDDEN"]}, {pr: "BUILD", pa: "BUILT", choices: ["BUILDED", "BUILT", "BUILDING"]}, {pr: "FALL", pa: "FELL", choices: ["FALLED", "FELL", "FALLEN"]}, {pr: "WAKE", pa: "WOKE", choices: ["WAKED", "WOKE", "WOKEN"]}, {pr: "GIVE", pa: "GAVE", choices: ["GIVED", "GAVE", "GIVEN"]}, {pr: "BUY", pa: "BOUGHT", choices: ["BUYED", "BOUGHT", "BUYING"]}],
-        // ROUND 4: General Past
         [{pr: "SEE", pa: "SAW", choices: ["SEED", "SAW", "SEEN"]}, {pr: "SAY", pa: "SAID", choices: ["SAYED", "SAID", "SAYING"]}, {pr: "BREAK", pa: "BROKE", choices: ["BREAKED", "BROKE", "BROKEN"]}, {pr: "BEGIN", pa: "BEGAN", choices: ["BEGINNED", "BEGUN", "BEGAN"]}, {pr: "CHOOSE", pa: "CHOSE", choices: ["CHOOSED", "CHOSE", "CHOSEN"]}, {pr: "FORGET", pa: "FORGOT", choices: ["FORGETTED", "FORGOT", "FORGOTTEN"]}, {pr: "KEEP", pa: "KEPT", choices: ["KEEPED", "KEPT", "KEEPING"]}, {pr: "LEAVE", pa: "LEFT", choices: ["LEAVED", "LEFT", "LEAVING"]}, {pr: "SEND", pa: "SENT", choices: ["SENDED", "SENT", "SENDING"]}, {pr: "TELL", pa: "TOLD", choices: ["TELLED", "TOLD", "TELLING"]}]
     ];
 
@@ -159,7 +178,7 @@
         allSlides[currentIdx].classList.add('active');
         document.getElementById('progress').innerText = `${currentIdx + 1} / ${allSlides.length}`;
         if(currentIdx === 1) setupHunt();
-        if(currentIdx === 2) startTug();
+        if(currentIdx === 3) startTug();
     }
 
     /* WORD HUNT */
@@ -196,9 +215,11 @@
         document.getElementById('p1-count').innerText = p1WordsDone;
         document.getElementById('p2-count').innerText = p2WordsDone;
         
-        // Win Check
-        if(flagPos <= 5 || p1WordsDone >= 10) showWinner("TEAM PINK");
-        else if(flagPos >= 95 || p2WordsDone >= 10) showWinner("TEAM BLUE");
+        if(flagPos <= 5 || (p1WordsDone >= 10 && flagPos < 50)) showWinner("TEAM PINK");
+        else if(flagPos >= 95 || (p2WordsDone >= 10 && flagPos > 50)) showWinner("TEAM BLUE");
+        else if(p1WordsDone >= 10 && p2WordsDone >= 10) {
+            showWinner(flagPos < 50 ? "TEAM PINK" : "TEAM BLUE");
+        }
     }
 
     function loadWord(p) {
@@ -211,7 +232,6 @@
         const container = document.getElementById(`p${p}-options`);
         container.innerHTML = '';
 
-        // Shuffle choices
         const shuffled = [...verb.choices].sort(() => Math.random() - 0.5);
 
         shuffled.forEach(choice => {
@@ -221,7 +241,7 @@
             btn.onclick = () => {
                 if(choice === verb.pa) {
                     document.getElementById('sfx-ok').play();
-                    flagPos += (p === 1 ? -8 : 8); // Pink pulls left (-), Blue pulls right (+)
+                    flagPos += (p === 1 ? -8 : 8); 
                     if(p === 1) p1WordsDone++; else p2WordsDone++;
                     updateTugUI();
                     loadWord(p);
@@ -242,7 +262,6 @@
         text.innerText = `${team} WINS!`;
         text.style.color = team === "TEAM PINK" ? "var(--accent)" : "#3498db";
         
-        // Hide next button if on last round
         document.getElementById('next-round-btn').style.display = currentRound < 3 ? 'block' : 'none';
         if(currentRound === 3) document.getElementById('win-sub').innerText = "Congratulations! You finished all 4 rounds!";
     }
