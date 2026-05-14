@@ -13,7 +13,6 @@
 
         body { font-family: 'Quicksand', sans-serif; background-color: #f0f4f8; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
         
-        /* Full Screen Button */
         #fullscreen-btn { position: absolute; top: 20px; right: 20px; z-index: 100; background: white; border: 2px solid var(--blue); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         #fullscreen-btn:hover { transform: scale(1.1); background: var(--blue); }
 
@@ -58,17 +57,16 @@
 
 <div class="container" id="main-container">
     
-    <!-- SLIDE 1: WELCOME -->
     <div class="slide active">
         <h1>TIME TRAVELERS 🕒</h1>
         <p style="font-size: 1.5rem;">The "Yesterday" Mission</p>
         <img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=500&q=80" style="width: 350px; border-radius: 30px; border: 8px solid var(--blue);">
     </div>
 
-    <!-- SLIDE 2: WARM UP -->
+    <!-- WARM UP -->
     <div class="slide">
         <h2>WARM UP: WORD HUNT 🕵️</h2>
-        <p>Find the 72 words hidden in "YESTERDAY"!</p>
+        <p>Find words hidden in "YESTERDAY"!</p>
         <div id="hunt-display" style="font-size: 3.5rem; color: var(--accent); height: 80px; border-bottom: 5px solid var(--blue); min-width: 300px; margin-bottom: 20px; font-family:'Bungee';"></div>
         <div class="tile-grid" id="hunt-tiles"></div>
         <div style="margin-bottom:15px;">
@@ -78,7 +76,6 @@
         <div id="found-log" style="display:flex; flex-wrap:wrap; gap:8px; padding:15px; background:#f8f8f8; border-radius:20px; width:90%; min-height:50px;"></div>
     </div>
 
-    <!-- SLIDE 3: RULES -->
     <div class="slide">
         <h2>Verb Formation 🛠️</h2>
         <div class="rule-box">
@@ -99,7 +96,6 @@
         </div>
     </div>
 
-    <!-- SLIDE 5: TUG OF WAR -->
     <div class="slide">
         <h2>VERB TUG-OF-WAR ⚔️</h2>
         <div class="tug-container">
@@ -136,8 +132,10 @@
     const allSlides = document.querySelectorAll('.slide');
     let typed = "";
     let flagPos = 50;
+    let foundWords = []; // Track words to prevent repetition
 
-    const huntDict = ["STAYED", "STARED", "STEADY", "TRADES", "TREADS", "TEASER", "TEARED", "YEARED", "YEARS", "YEAST", "YEARN", "TEARS", "RATES", "STARE", "STRAY", "TRADE", "TREAD", "READY", "DEARS", "DATES", "RATED", "DRYER", "SAYER", "STEAD", "TREES", "YEAR", "YARE", "EAST", "EASY", "EARS", "ERAS", "TEAS", "SEAT", "RATE", "READ", "DEAR", "DARE", "DATE", "DRAY", "TRAY", "STAY", "STAR", "REST", "REAR", "TREE", "TEAR", "SEED", "REED", "RISE", "YES", "YET", "DAY", "DYE", "DRY", "SAY", "SEA", "SET", "SAT", "SAD", "ATE", "EAT", "TEA", "EAR", "ERA", "ARE", "RED", "RYE", "TRY", "ART", "RAT", "TAR"];
+    // Added "SEE" to the dictionary
+    const huntDict = ["SEE", "STAYED", "STARED", "STEADY", "TRADES", "TREADS", "TEASER", "TEARED", "YEARED", "YEARS", "YEAST", "YEARN", "TEARS", "RATES", "STARE", "STRAY", "TRADE", "TREAD", "READY", "DEARS", "DATES", "RATED", "DRYER", "SAYER", "STEAD", "TREES", "YEAR", "YARE", "EAST", "EASY", "EARS", "ERAS", "TEAS", "SEAT", "RATE", "READ", "DEAR", "DARE", "DATE", "DRAY", "TRAY", "STAY", "STAR", "REST", "REAR", "TREE", "TEAR", "SEED", "REED", "RISE", "YES", "YET", "DAY", "DYE", "DRY", "SAY", "SEA", "SET", "SAT", "SAD", "ATE", "EAT", "TEA", "EAR", "ERA", "ARE", "RED", "RYE", "TRY", "ART", "RAT", "TAR"];
 
     const tugVerbs = [
         {pr: "WALK", pa: "WALKED", choices: ["WALKED", "WALKING", "WALKS"]},
@@ -183,11 +181,18 @@
     function clearHunt() { typed = ""; document.getElementById('hunt-display').innerText = ""; document.querySelectorAll('.tile').forEach(t=>t.classList.remove('used')); }
     
     function submitHunt() {
-        if(huntDict.includes(typed)) {
+        // Logic: Correct word AND not already found
+        if(huntDict.includes(typed) && !foundWords.includes(typed)) {
             document.getElementById('sfx-ok').play();
-            const s = document.createElement('span'); s.innerText = typed; s.style="background:var(--green); padding:8px 12px; border-radius:12px; font-weight:bold;";
+            foundWords.push(typed); // Store in found list
+            const s = document.createElement('span'); 
+            s.innerText = typed; 
+            s.style="background:var(--green); padding:8px 12px; border-radius:12px; font-weight:bold;";
             document.getElementById('found-log').prepend(s);
-        } else { document.getElementById('sfx-no').play(); }
+        } else { 
+            // Plays if wrong OR if duplicate
+            document.getElementById('sfx-no').play(); 
+        }
         clearHunt();
     }
 
